@@ -50,4 +50,10 @@ public class FileController {
         return new ResponseEntity<>(resource, httpHeaders, HttpStatus.OK);
     }
 
+    @GetMapping("/delete/{filename}")
+    public String delete(@PathVariable String filename) {
+        s3Service.deleteFile(filename);
+
+        return "redirect:/";
+    }
 }

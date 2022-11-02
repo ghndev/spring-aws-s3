@@ -17,7 +17,10 @@
 <p>Download files</p>
 <ol class="mt-5">
     <li th:each="file : ${files}">
-        <a th:href="@{/download/{filename}(filename = ${file})}" th:text="${file.substring(0, file.length() - 40)}"></a>
+        <div class="flex">
+            <a class="text-blue-600 underline" th:href="@{/download/{filename}(filename = ${file})}" th:text="${file.substring(0, file.length() - 40)}"></a>
+            <a class="text-red-600 underline ml-2" th:href="@{/delete/{filename}(filename = ${file})}">delete</a>
+        </div>
     </li>
 </ol>
 </body>

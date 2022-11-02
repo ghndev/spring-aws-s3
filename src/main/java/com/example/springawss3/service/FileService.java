@@ -10,7 +10,7 @@ public interface FileService {
 
     byte[] getObject(String filename);
 
-    String deleteFile(String filename);
+    void deleteFile(String filename);
 
     List<String> findAll();
 }

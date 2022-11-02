@@ -65,9 +65,8 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public String deleteFile(String filename) {
+    public void deleteFile(String filename) {
         s3.deleteObject(bucketName, filename);
-        return "File deleted";
     }
 
     @Override
