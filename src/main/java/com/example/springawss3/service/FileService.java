@@ -8,7 +8,7 @@ public interface FileService {
 
     void uploadFile(MultipartFile file);
 
-    byte[] downloadFile(String filename);
+    byte[] getObject(String filename);
 
     String deleteFile(String filename);
 

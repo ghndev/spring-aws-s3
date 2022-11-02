@@ -13,5 +13,12 @@
     <input type="file" name="file" />
     <button type="submit" class="p-2 bg-blue-600 rounded text-white text-5xl">UPLOAD</button>
 </form>
+<p th:classappend="${message} == 'success' ? 'text-green-600' : 'text-red-600'" class="text-5xl mt-5" th:text="${message}"></p>
+<p>Download files</p>
+<ol class="mt-5">
+    <li th:each="file : ${files}">
+        <a th:href="@{/download/{filename}(filename = ${file})}" th:text="${file.substring(0, file.length() - 40)}"></a>
+    </li>
+</ol>
 </body>
 </html>

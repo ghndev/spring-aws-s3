@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -41,10 +42,9 @@ public class S3Service implements FileService {
     }
 
     private String createFileName(String originalFilename) {
-        String substring = originalFilename.substring(originalFilename.lastIndexOf("."));
-        int length = substring.length() + 1;
+        String filename = originalFilename.substring(0, originalFilename.lastIndexOf("."));
 
-        return originalFilename.substring(0, length)
+        return filename
                 + UUID.randomUUID().toString().concat(getFileExtension(originalFilename));
     }
 
@@ -53,7 +53,7 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public byte[] downloadFile(String filename) {
+    public byte[] getObject(String filename) {
         S3Object object = s3.getObject(bucketName, filename);
         S3ObjectInputStream objectContent = object.getObjectContent();
 
@@ -75,5 +75,14 @@ public class S3Service implements FileService {
         ListObjectsV2Result listObjectsV2Result = s3.listObjectsV2(bucketName);
         return listObjectsV2Result.getObjectSummaries()
                 .stream().map(S3ObjectSummary::getKey).collect(Collectors.toList());
+    }
+
+    public boolean isValid(MultipartFile file) {
+        if (file.getSize() > 30000) {
+            return false;
+        }
+
+        String name = Objects.requireNonNull(file.getOriginalFilename()).toUpperCase();
+        return name.endsWith(".JPG") || name.endsWith(".PNG") || name.endsWith(".GIF");
     }
 }
