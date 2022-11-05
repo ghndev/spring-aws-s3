@@ -1,5 +1,7 @@
 package com.example.springawss3.controller;
 
+import com.example.springawss3.domain.File;
+import com.example.springawss3.domain.FileDto;
 import com.example.springawss3.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.io.IOException;
 
 @Controller
 @RequiredArgsConstructor
@@ -62,9 +62,14 @@ public class FileController {
 
     @GetMapping("/preview/{filename}")
     public String preview(@PathVariable String filename, Model model) {
-        String bucketName = s3Service.getBucketName();
+        File file = s3Service.findFileByFilename(filename);
 
-        model.addAttribute("bucketName", bucketName);
+        FileDto fileDto = FileDto.builder()
+                .originalFilename(file.getOriginalFilename())
+                .fullPath(file.getFullPath())
+                .build();
+
+        model.addAttribute("fullPath", fileDto.getFullPath());
         return "preview";
     }
 }

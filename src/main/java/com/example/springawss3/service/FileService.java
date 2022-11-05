@@ -12,5 +12,5 @@ public interface FileService {
 
     void deleteFile(String filename);
 
-    List<String> findAll();
+    List<String> filenameList();
 }

@@ -18,7 +18,7 @@ public class HomeController {
     @GetMapping
     public String home(@RequestParam(value = "message", required = false) String message, Model model) {
 
-        List<String> filenames = s3Service.findAll();
+        List<String> filenames = s3Service.filenameList();
 
         model.addAttribute("message", message);
         model.addAttribute("files", filenames);

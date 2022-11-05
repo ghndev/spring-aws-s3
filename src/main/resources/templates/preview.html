@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col justify-center items-center h-screen w-screen">
-<img th:src="@{https://{bucketName}.s3.ap-northeast-2.amazonaws.com/{filename}(bucketName = ${bucketName}, filename = ${filename})}">
+<img th:src="@{__${fullPath}__}">
 <p th:text="${filename}"></p>
 </body>
 </html>

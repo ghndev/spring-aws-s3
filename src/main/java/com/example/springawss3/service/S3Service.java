@@ -3,6 +3,8 @@ package com.example.springawss3.service;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.example.springawss3.domain.File;
+import com.example.springawss3.repository.FileRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +28,31 @@ public class S3Service implements FileService {
     @Value("${bucketName}")
     private String bucketName;
 
+    @Value("${bucketUrl}")
+    private String bucketUrl;
+
+    private final FileRepository fileRepository;
     private final AmazonS3 s3;
 
     @Override
-    public void uploadFile(MultipartFile file) {
-        String fileName = createFileName(Objects.requireNonNull(file.getOriginalFilename()));
+    public void uploadFile(MultipartFile multipartFile) {
+        String fileName = createFileName(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentLength(file.getSize());
-        objectMetadata.setContentType(file.getContentType());
+        objectMetadata.setContentLength(multipartFile.getSize());
+        objectMetadata.setContentType(multipartFile.getContentType());
 
-        try (InputStream inputStream = file.getInputStream()) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
             s3.putObject(new PutObjectRequest(bucketName, fileName, inputStream, objectMetadata));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        File file = File.builder()
+                .originalFilename(fileName)
+                .fullPath(bucketUrl + "/" + fileName)
+                .build();
+
+        fileRepository.save(file);
     }
 
     private String createFileName(String originalFilename) {
@@ -71,7 +84,7 @@ public class S3Service implements FileService {
     }
 
     @Override
-    public List<String> findAll() {
+    public List<String> filenameList() {
         ListObjectsV2Result listObjectsV2Result = s3.listObjectsV2(bucketName);
         return listObjectsV2Result.getObjectSummaries()
                 .stream().map(S3ObjectSummary::getKey).collect(Collectors.toList());
@@ -84,5 +97,9 @@ public class S3Service implements FileService {
 
         String name = Objects.requireNonNull(file.getOriginalFilename()).toUpperCase();
         return name.endsWith(".JPG") || name.endsWith(".PNG") || name.endsWith(".GIF");
+    }
+
+    public File findFileByFilename(String filename) {
+        return fileRepository.findFileByOriginalFilename(filename);
     }
 }
