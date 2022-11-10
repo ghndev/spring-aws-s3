@@ -35,7 +35,7 @@ public class S3Service implements FileService {
     private final AmazonS3 s3;
 
     @Override
-    public void uploadFile(MultipartFile multipartFile) {
+    public Long uploadFile(MultipartFile multipartFile) {
         String fileName = createFileName(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
@@ -53,6 +53,8 @@ public class S3Service implements FileService {
                 .build();
 
         fileRepository.save(file);
+
+        return file.getId();
     }
 
     private String createFileName(String originalFilename) {
@@ -101,5 +103,10 @@ public class S3Service implements FileService {
 
     public File findFileByFilename(String filename) {
         return fileRepository.findFileByOriginalFilename(filename);
+    }
+
+    public File findFileById(Long id) {
+        return fileRepository.findById(id)
+                .orElseThrow(RuntimeException::new);
     }
 }

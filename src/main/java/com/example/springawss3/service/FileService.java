@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface FileService {
 
-    void uploadFile(MultipartFile file);
+    Long uploadFile(MultipartFile file);
 
     byte[] getObject(String filename);
 
