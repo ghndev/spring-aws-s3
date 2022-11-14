@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col justify-center items-center h-screen w-screen">
-<img th:src="@{__${fullPath}__}">
+<img th:src="@{/img/__${filename}__}">
 <p th:text="${filename}"></p>
 </body>
 </html>

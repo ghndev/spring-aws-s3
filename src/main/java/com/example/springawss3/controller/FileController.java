@@ -5,6 +5,7 @@ import com.example.springawss3.domain.FileDto;
 import com.example.springawss3.service.S3Service;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class FileController {
@@ -33,7 +35,7 @@ public class FileController {
         Long id = s3Service.uploadFile(multipartFile);
         File file = s3Service.findFileById(id);
         String filename = file.getOriginalFilename();
-        // 실제 프로젝트에선 게시판이 삭제될때 게시판과 매핑된
+        // 실제 프로젝트에선 게시판이 삭제될때 게시판과 매핑
 
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("url", s3Service.getBucketUrl() + "/" + filename);
@@ -79,15 +81,8 @@ public class FileController {
     }
 
     @GetMapping("/preview/{filename}")
-    public String preview(@PathVariable String filename, Model model) {
-        File file = s3Service.findFileByFilename(filename);
-
-        FileDto fileDto = FileDto.builder()
-                .originalFilename(file.getOriginalFilename())
-                .fullPath(file.getFullPath())
-                .build();
-
-        model.addAttribute("fullPath", fileDto.getFullPath());
+    public String preview(@PathVariable String filename) {
         return "preview";
     }
+
 }
